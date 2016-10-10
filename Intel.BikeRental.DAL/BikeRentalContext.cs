@@ -36,10 +36,22 @@ namespace Intel.BikeRental.DAL
             modelBuilder.Configurations.Add(new BikeConfiguration());
             modelBuilder.Configurations.Add(new RentalConfiguration());
             modelBuilder.Configurations.Add(new StationConfiguration());
-            
+
             // Configuring TPT hierarchy
-            modelBuilder.Entity<Bike>().ToTable("Bikes");
-            modelBuilder.Entity<Scooter>().ToTable("Scooters");
+            //modelBuilder.Entity<Bike>().ToTable("Bikes");
+            //modelBuilder.Entity<Scooter>().ToTable("Scooters");
+
+            // Configuring TPC hierarchy
+            modelBuilder.Entity<Bike>().Map(x =>
+            {
+                x.MapInheritedProperties();
+                x.ToTable("Bikes");
+            });
+            modelBuilder.Entity<Scooter>().Map(x =>
+            {
+                x.MapInheritedProperties();
+                x.ToTable("Scooters");
+            });
 
             // Adding custom conventions
             modelBuilder.Conventions.Add(new DateTime2Convention());
