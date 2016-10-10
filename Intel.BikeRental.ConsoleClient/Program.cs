@@ -39,9 +39,85 @@ select 'HE HE");
             SqlUpdateWithParamTest(@"Red'; USE master;
 ALTER DATABASE [BikeRentalDb] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 DROP DATABASE [BikeRentalDb] ;
-select 'HE HE");*/
+select 'HE HE");
+            GetSqlTest();*/
 
-            GetSqlTest();
+            ExecuteSpWithOutParameterTest();
+        }
+
+        private static void ExecuteSpWithOutParameterTest()
+        {
+            var proc = @"
+            create procedure uspDeleteBikeWithColorOut(@BikeId int, @Color varchar output)
+            as begin
+	            select @Color = [color] from [rentals].[Vehicles] where [VehicleId] = @BikeId;
+	            delete from [rentals].[Vehicles] where [VehicleId] = @BikeId;
+            end
+            ";
+
+            using (var context = new BikeRentalContext())
+            {
+                context.Bikes.Add(new Bike
+                {
+                    BikeType = BikeType.City,
+                    Color = "Test",
+                    Number = "B123"
+                });
+
+                context.SaveChanges();
+                context.Bikes.ToList().Dump();
+
+                var bikeToDelete = context.Bikes.FirstOrDefault(x => x.Number == "B123");
+
+                if (bikeToDelete != null)
+                {
+                    var idParameter = new SqlParameter("BikeId", bikeToDelete.VehicleId);
+                    var outputParameter = new SqlParameter
+                    {
+                        ParameterName = "Color",
+                        Direction = System.Data.ParameterDirection.Output
+                    };
+
+                    context.Database.ExecuteSqlCommand("uspDeleteBikeWithColorOut @BikeId @Color", idParameter, outputParameter);
+
+                    context.SaveChanges();
+                    context.Bikes.ToList().Dump();
+                }
+            }
+        }
+
+        private static void ExecuteSpTest()
+        {
+            var proc = @"
+            create procedure uspDeleteBike(@BikeId int)
+            as begin
+	            delete from [rentals].[Vehicles] where [VehicleId] = @BikeId;
+            end
+            ";
+
+            using (var context = new BikeRentalContext())
+            {
+                context.Bikes.Add(new Bike
+                {
+                    BikeType = BikeType.City,
+                    Color = "Test",
+                    Number = "B123"
+                });
+
+                context.SaveChanges();
+                context.Bikes.ToList().Dump();
+
+                var bikeToDelete = context.Bikes.FirstOrDefault(x => x.Number == "B123");
+
+                if (bikeToDelete != null)
+                {
+                    var idParameter = new SqlParameter("BikeId", bikeToDelete.VehicleId);
+                    context.Database.ExecuteSqlCommand("uspDeleteBike @BikeId", idParameter);
+
+                    context.SaveChanges();
+                    context.Bikes.ToList().Dump();
+                }
+            }
         }
 
         private static void GetSqlTest()
