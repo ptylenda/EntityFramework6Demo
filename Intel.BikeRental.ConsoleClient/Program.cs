@@ -1,5 +1,5 @@
 ﻿using Intel.BikeRental.DAL;
-using Intel.BikeRental.DAL.Migrations;
+//using Intel.BikeRental.DAL.Migrations;
 using Intel.BikeRental.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Intel.BikeRental.ConsoleClient
     {
         static void Main(string[] args)
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<BikeRentalContext, Configuration>());
+            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<BikeRentalContext, Configuration>());
             /*AddStationTest();
             AddUserTest();
             AddBikeTest();
@@ -20,12 +20,41 @@ namespace Intel.BikeRental.ConsoleClient
             UpdateBikeTest();
             AddUserAndCompareStateTest();
             DeleteUserTest();
-            AttachBikeTest();*/
-
+            AttachBikeTest();
             AddVehiclesTest();
             GetVehiclesTest();
+            SelectTest();*/
+
+            GroupByTest();
         }
-        
+
+        private static void GroupByTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var groups = context.Vehicles.GroupBy(v => v.Color);
+                foreach (var group in groups)
+                {
+                    Console.WriteLine(group);
+                }
+
+                Console.WriteLine(groups.ToString());
+            }
+        }
+
+        private static void SelectTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var vehicles = context.Vehicles.Select(x => new { x.Color, x.Number });
+                foreach (var v in vehicles)
+                {
+                    Console.WriteLine(v);
+                }
+
+                Console.WriteLine(vehicles.ToString());
+            }
+        }
 
         private static void GetVehiclesTest()
         {

@@ -43,8 +43,7 @@ namespace Intel.BikeRental.DAL
             //modelBuilder.Entity<Scooter>().ToTable("Scooters");
 
             // Configuring TPC hierarchy (unfortunately it gives PK without identity... doesn't work properly)
-
-            modelBuilder.Entity<Vehicle>()
+            /*modelBuilder.Entity<Vehicle>()
                 .Property(c => c.VehicleId)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
             modelBuilder.Entity<Bike>().Map(x =>
@@ -56,7 +55,7 @@ namespace Intel.BikeRental.DAL
             {
                 x.MapInheritedProperties();
                 x.ToTable("Scooters");
-            });
+            });*/
 
             // Adding custom conventions
             modelBuilder.Conventions.Add(new DateTime2Convention());
