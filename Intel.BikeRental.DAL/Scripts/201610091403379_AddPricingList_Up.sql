@@ -1,0 +1,1 @@
+﻿update rentals.Users set IsActive = 1;
