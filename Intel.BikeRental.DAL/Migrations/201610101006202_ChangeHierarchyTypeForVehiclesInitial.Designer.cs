@@ -7,13 +7,13 @@ namespace Intel.BikeRental.DAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Initial : IMigrationMetadata
+    public sealed partial class ChangeHierarchyTypeForVehiclesInitial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeHierarchyTypeForVehiclesInitial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201610100943118_Initial"; }
+            get { return "201610101006202_ChangeHierarchyTypeForVehiclesInitial"; }
         }
         
         string IMigrationMetadata.Source

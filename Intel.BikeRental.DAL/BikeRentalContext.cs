@@ -36,6 +36,9 @@ namespace Intel.BikeRental.DAL
             modelBuilder.Configurations.Add(new BikeConfiguration());
             modelBuilder.Configurations.Add(new RentalConfiguration());
             modelBuilder.Configurations.Add(new StationConfiguration());
+            
+            modelBuilder.Entity<Bike>().ToTable("Bikes");
+            modelBuilder.Entity<Scooter>().ToTable("Scooters");
 
             // Adding custom conventions
             modelBuilder.Conventions.Add(new DateTime2Convention());

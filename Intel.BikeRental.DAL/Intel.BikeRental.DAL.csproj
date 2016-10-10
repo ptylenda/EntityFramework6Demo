@@ -56,9 +56,9 @@
     <Compile Include="Configurations\UserConfiguration.cs" />
     <Compile Include="Conventions\DateTime2Convention.cs" />
     <Compile Include="Conventions\KeyConvention.cs" />
-    <Compile Include="Migrations\201610100943118_Initial.cs" />
-    <Compile Include="Migrations\201610100943118_Initial.Designer.cs">
-      <DependentUpon>201610100943118_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201610101006202_ChangeHierarchyTypeForVehiclesInitial.cs" />
+    <Compile Include="Migrations\201610101006202_ChangeHierarchyTypeForVehiclesInitial.Designer.cs">
+      <DependentUpon>201610101006202_ChangeHierarchyTypeForVehiclesInitial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,8 +74,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201610100943118_Initial.resx">
-      <DependentUpon>201610100943118_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610101006202_ChangeHierarchyTypeForVehiclesInitial.resx">
+      <DependentUpon>201610101006202_ChangeHierarchyTypeForVehiclesInitial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -13,7 +13,7 @@ namespace Intel.BikeRental.Models
         public User User { get; set; }
 
         // This cannot be changed immediately
-        public Bike Bike { get; set; }
+        public Vehicle Vehicle { get; set; }
 
         public Station StationFrom { get; set; }
 

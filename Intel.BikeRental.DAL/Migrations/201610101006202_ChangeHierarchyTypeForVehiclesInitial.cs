@@ -3,7 +3,7 @@ namespace Intel.BikeRental.DAL.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initial : DbMigration
+    public partial class ChangeHierarchyTypeForVehiclesInitial : DbMigration
     {
         public override void Up()
         {
@@ -15,10 +15,6 @@ namespace Intel.BikeRental.DAL.Migrations
                         Color = c.String(maxLength: 20, unicode: false),
                         Number = c.String(nullable: false, maxLength: 10, unicode: false),
                         IsActive = c.Boolean(nullable: false),
-                        BikeType = c.Int(),
-                        EngineCapacity = c.Int(),
-                        MaxSpeed = c.Byte(),
-                        Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.VehicleId);
             
@@ -39,20 +35,20 @@ namespace Intel.BikeRental.DAL.Migrations
                         DateFrom = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                         DateTo = c.DateTime(precision: 7, storeType: "datetime2"),
                         Cost = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        Bike_VehicleId = c.Int(),
                         StationFrom_StationId = c.Int(),
                         StationTo_StationId = c.Int(),
                         User_UserKey = c.Int(),
+                        Vehicle_VehicleId = c.Int(),
                     })
                 .PrimaryKey(t => t.RentalId)
-                .ForeignKey("rentals.Vehicles", t => t.Bike_VehicleId)
                 .ForeignKey("rentals.Stations", t => t.StationFrom_StationId)
                 .ForeignKey("rentals.Stations", t => t.StationTo_StationId)
                 .ForeignKey("rentals.Users", t => t.User_UserKey)
-                .Index(t => t.Bike_VehicleId)
+                .ForeignKey("rentals.Vehicles", t => t.Vehicle_VehicleId)
                 .Index(t => t.StationFrom_StationId)
                 .Index(t => t.StationTo_StationId)
-                .Index(t => t.User_UserKey);
+                .Index(t => t.User_UserKey)
+                .Index(t => t.Vehicle_VehicleId);
             
             CreateTable(
                 "rentals.Stations",
@@ -83,18 +79,47 @@ namespace Intel.BikeRental.DAL.Migrations
                     })
                 .PrimaryKey(t => t.UserKey);
             
+            CreateTable(
+                "rentals.Bikes",
+                c => new
+                    {
+                        VehicleId = c.Int(nullable: false),
+                        BikeType = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.VehicleId)
+                .ForeignKey("rentals.Vehicles", t => t.VehicleId)
+                .Index(t => t.VehicleId);
+            
+            CreateTable(
+                "rentals.Scooters",
+                c => new
+                    {
+                        VehicleId = c.Int(nullable: false),
+                        EngineCapacity = c.Int(nullable: false),
+                        MaxSpeed = c.Byte(nullable: false),
+                    })
+                .PrimaryKey(t => t.VehicleId)
+                .ForeignKey("rentals.Vehicles", t => t.VehicleId)
+                .Index(t => t.VehicleId);
+            
         }
         
         public override void Down()
         {
+            DropForeignKey("rentals.Scooters", "VehicleId", "rentals.Vehicles");
+            DropForeignKey("rentals.Bikes", "VehicleId", "rentals.Vehicles");
+            DropForeignKey("rentals.Rentals", "Vehicle_VehicleId", "rentals.Vehicles");
             DropForeignKey("rentals.Rentals", "User_UserKey", "rentals.Users");
             DropForeignKey("rentals.Rentals", "StationTo_StationId", "rentals.Stations");
             DropForeignKey("rentals.Rentals", "StationFrom_StationId", "rentals.Stations");
-            DropForeignKey("rentals.Rentals", "Bike_VehicleId", "rentals.Vehicles");
+            DropIndex("rentals.Scooters", new[] { "VehicleId" });
+            DropIndex("rentals.Bikes", new[] { "VehicleId" });
+            DropIndex("rentals.Rentals", new[] { "Vehicle_VehicleId" });
             DropIndex("rentals.Rentals", new[] { "User_UserKey" });
             DropIndex("rentals.Rentals", new[] { "StationTo_StationId" });
             DropIndex("rentals.Rentals", new[] { "StationFrom_StationId" });
-            DropIndex("rentals.Rentals", new[] { "Bike_VehicleId" });
+            DropTable("rentals.Scooters");
+            DropTable("rentals.Bikes");
             DropTable("rentals.Users");
             DropTable("rentals.Stations");
             DropTable("rentals.Rentals");

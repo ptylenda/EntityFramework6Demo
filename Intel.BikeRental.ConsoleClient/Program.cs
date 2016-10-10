@@ -223,7 +223,7 @@ namespace Intel.BikeRental.ConsoleClient
 
                 var rental = new Rental
                 {
-                    Bike = bike,
+                    Vehicle = bike,
                     StationFrom = station,
                     User = user,
                     DateFrom = DateTime.Now
