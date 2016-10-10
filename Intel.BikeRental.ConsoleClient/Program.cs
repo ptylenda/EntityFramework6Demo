@@ -1,4 +1,5 @@
-﻿using Intel.BikeRental.DAL;
+﻿using ConsoleDump;
+using Intel.BikeRental.DAL;
 //using Intel.BikeRental.DAL.Migrations;
 using Intel.BikeRental.Models;
 using System;
@@ -23,22 +24,76 @@ namespace Intel.BikeRental.ConsoleClient
             AttachBikeTest();
             AddVehiclesTest();
             GetVehiclesTest();
-            SelectTest();*/
+            SelectTest();
+            GroupByTest();*/
 
-            GroupByTest();
+            ExceptTest();
+        }
+
+        private static void ExceptTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var vehicle = context.Vehicles.First();
+                vehicle.IsActive = true;
+                context.SaveChanges();
+
+                var red = context.Vehicles.Where(x => x.Color == "Red");
+                red.ToList().Dump("Red:");
+
+                var active = context.Vehicles.Where(x => x.IsActive);
+                active.ToList().Dump("Active:");
+
+                var diff = red.Except(active);
+                diff.ToList().Dump("Red without active:");
+
+                var union = red.Union(active);
+                union.ToList().Dump("Red with active with duplicates:");
+
+                var unionDistinct = red.Union(active).Distinct();
+                unionDistinct.ToList().Dump("Red with active without duplicates:");
+            }
         }
 
         private static void GroupByTest()
         {
             using (var context = new BikeRentalContext())
             {
-                var groups = context.Vehicles.GroupBy(v => v.Color);
+                var groups = context.Vehicles
+                    .GroupBy(v => v.Color);
+
                 foreach (var group in groups)
                 {
                     Console.WriteLine(group);
                 }
 
                 Console.WriteLine(groups.ToString());
+                Console.WriteLine();
+
+                var groups2 = context.Vehicles
+                    .GroupBy(v => v.Color)
+                    .Select(g => new { Color = g.Key, Qty = g.Count() });
+
+                foreach (var group in groups2)
+                {
+                    Console.WriteLine(group);
+                }
+
+                // A really different query will be executed!
+                Console.WriteLine(groups2.ToString());
+                Console.WriteLine();
+
+                var groups3 = context.Vehicles
+                    .GroupBy(v => new { v.Color, v.IsActive })
+                    .Select(g => new { Color = g.Key.Color, IsActive = g.Key.IsActive, Qty = g.Count() });
+
+                foreach (var group in groups3)
+                {
+                    Console.WriteLine(group);
+                }
+                
+                Console.WriteLine(groups3.ToString());
+                Console.WriteLine();
             }
         }
 
