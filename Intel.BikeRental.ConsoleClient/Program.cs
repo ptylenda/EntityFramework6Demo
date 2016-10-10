@@ -5,6 +5,7 @@ using Intel.BikeRental.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace Intel.BikeRental.ConsoleClient
@@ -25,9 +26,80 @@ namespace Intel.BikeRental.ConsoleClient
             AddVehiclesTest();
             GetVehiclesTest();
             SelectTest();
-            GroupByTest();*/
-
+            GroupByTest();
             ExceptTest();
+            SyntaxTest();
+            SqlUpdateTest();
+            SqlUpdateWithParamUnsafeTest("Red");
+            SqlUpdateWithParamUnsafeTest(@"Red'; USE master;
+ALTER DATABASE [BikeRentalDb] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE [BikeRentalDb] ;
+select 'HE HE");
+            SqlUpdateWithParamTest("Red");
+            SqlUpdateWithParamTest(@"Red'; USE master;
+ALTER DATABASE [BikeRentalDb] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE [BikeRentalDb] ;
+select 'HE HE");*/
+
+            GetSqlTest();
+        }
+
+        private static void GetSqlTest()
+        {
+            string sql = $"SELECT * FROM [rentals].[Vehicles] where [Color] like 'r%' and Discriminator = 'Bike';";
+
+            using (var context = new BikeRentalContext())
+            {
+                var bikes = context.Database.SqlQuery<Bike>(sql);
+                bikes.ToList().Dump();
+            }
+        }
+
+        private static void SqlUpdateWithParamTest(string color)
+        {
+            string sql = $"update[rentals].[Vehicles] set [IsActive] = 0 where [Color] = @pColor;";
+            var colorParameter = new SqlParameter("pColor", color);
+
+            using (var context = new BikeRentalContext())
+            {
+                context.Database.ExecuteSqlCommand(sql, colorParameter);
+            }
+        }
+
+        private static void SqlUpdateWithParamUnsafeTest(string color)
+        {
+            string sql = $"update[rentals].[Vehicles] set [IsActive] = 0 where [Color] = '{color}';";
+
+            using (var context = new BikeRentalContext())
+            {
+                context.Database.ExecuteSqlCommand(sql);
+            }
+        }
+
+        private static void SqlUpdateTest()
+        {
+            string sql = "update[rentals].[Vehicles] set [IsActive] = 0;";
+
+            using (var context = new BikeRentalContext())
+            {
+                context.Database.ExecuteSqlCommand(sql);                
+            }
+        }
+
+        private static void SyntaxTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var query = (from vehicle in context.Vehicles
+                            where vehicle.Color == "Red"
+                            orderby vehicle.Number
+                            select vehicle)
+                            .Where(x => x.Number.Contains("1"));
+
+                Console.WriteLine(query.ToString());
+                var unionDistinct = query.Distinct();
+                unionDistinct.ToList().Dump();
+            }
         }
 
         private static void ExceptTest()
