@@ -56,25 +56,9 @@
     <Compile Include="Configurations\UserConfiguration.cs" />
     <Compile Include="Conventions\DateTime2Convention.cs" />
     <Compile Include="Conventions\KeyConvention.cs" />
-    <Compile Include="Migrations\201610091259322_InitialCreate.cs" />
-    <Compile Include="Migrations\201610091259322_InitialCreate.Designer.cs">
-      <DependentUpon>201610091259322_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610091340364_AddStationConfiguration.cs" />
-    <Compile Include="Migrations\201610091340364_AddStationConfiguration.Designer.cs">
-      <DependentUpon>201610091340364_AddStationConfiguration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610091348130_AddUser.cs" />
-    <Compile Include="Migrations\201610091348130_AddUser.Designer.cs">
-      <DependentUpon>201610091348130_AddUser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610091403379_AddPricingList.cs" />
-    <Compile Include="Migrations\201610091403379_AddPricingList.Designer.cs">
-      <DependentUpon>201610091403379_AddPricingList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610091431277_AddStationIsActive.cs" />
-    <Compile Include="Migrations\201610091431277_AddStationIsActive.Designer.cs">
-      <DependentUpon>201610091431277_AddStationIsActive.cs</DependentUpon>
+    <Compile Include="Migrations\201610100943118_Initial.cs" />
+    <Compile Include="Migrations\201610100943118_Initial.Designer.cs">
+      <DependentUpon>201610100943118_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,24 +74,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201610091259322_InitialCreate.resx">
-      <DependentUpon>201610091259322_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610100943118_Initial.resx">
+      <DependentUpon>201610100943118_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610091340364_AddStationConfiguration.resx">
-      <DependentUpon>201610091340364_AddStationConfiguration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610091348130_AddUser.resx">
-      <DependentUpon>201610091348130_AddUser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610091403379_AddPricingList.resx">
-      <DependentUpon>201610091403379_AddPricingList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610091431277_AddStationIsActive.resx">
-      <DependentUpon>201610091431277_AddStationIsActive.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Scripts\201610091403379_AddPricingList_Up.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

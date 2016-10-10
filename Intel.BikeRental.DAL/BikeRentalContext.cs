@@ -13,6 +13,8 @@ namespace Intel.BikeRental.DAL
         {
         }
 
+        public DbSet<Vehicle> Vehicles { get; set; }
+
         public DbSet<Bike> Bikes { get; set; }
 
         public DbSet<Station> Stations { get; set; }
@@ -28,7 +30,7 @@ namespace Intel.BikeRental.DAL
             base.OnModelCreating(modelBuilder);
             
             modelBuilder.HasDefaultSchema("rentals");
-
+            
             // Organising and adding custom configurations
             modelBuilder.Configurations.Add(new UserConfiguration());
             modelBuilder.Configurations.Add(new BikeConfiguration());
