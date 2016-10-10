@@ -19,10 +19,56 @@ namespace Intel.BikeRental.ConsoleClient
             AddRentalTest();
             UpdateBikeTest();
             AddUserAndCompareStateTest();
-            DeleteUserTest();*/
+            DeleteUserTest();
+            AttachBikeTest();*/
 
-            AttachBikeTest();
+            AddVehiclesTest();
+            GetVehiclesTest();
+        }
+        
 
+        private static void GetVehiclesTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                foreach (var v in context.Vehicles)
+                {
+                    Console.WriteLine($"{v.Number}, {v.GetType().FullName}");
+                }
+            }
+        }
+
+        private static void AddVehiclesTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var bike = new Bike
+                {
+                    BikeType = BikeType.City,
+                    Color = "red",
+                    Number = "B005"
+                };
+
+                var bike2 = new Bike
+                {
+                    BikeType = BikeType.Moutain,
+                    Color = "yellow",
+                    Number = "B006"
+                };
+
+                var scooter = new Scooter
+                {
+                    Color = "yellow",
+                    Number = "S001",
+                    EngineCapacity = 100
+                };
+
+                context.Vehicles.Add(bike);
+                context.Vehicles.Add(bike2);
+                context.Vehicles.Add(scooter);
+
+                context.SaveChanges();
+            }
         }
 
         private static void AttachBikeTest()
@@ -30,12 +76,12 @@ namespace Intel.BikeRental.ConsoleClient
             using (var context = new BikeRentalContext())
             {
                 // Either use AsNoTracking or Detach later. Otherwise these bike and bike2 will collide when attaching
-                var bike = context.Bikes.AsNoTracking().First(x => x.BikeId == 1);
+                var bike = context.Bikes.AsNoTracking().First(x => x.VehicleId == 1);
 
                 // deserialization simulation, similar to App -> WS -> App -> WS
                 var bike2 = new Bike
                 {
-                    BikeId = bike.BikeId,
+                    VehicleId = bike.VehicleId,
                     BikeType = bike.BikeType,
                     Color = bike.Color,
                     IsActive = bike.IsActive,
@@ -58,7 +104,7 @@ namespace Intel.BikeRental.ConsoleClient
                 context.Entry(bike2).State = EntityState.Unchanged;
                 context.Entry(bike2).Property(x => x.Number).IsModified = true;
                 Console.WriteLine(context.Entry(bike2).State);
-
+                
                 context.SaveChanges();
             }
         }
@@ -179,7 +225,7 @@ namespace Intel.BikeRental.ConsoleClient
                 {
                     Bike = bike,
                     StationFrom = station,
-                    USer = user,
+                    User = user,
                     DateFrom = DateTime.Now
                 };
 

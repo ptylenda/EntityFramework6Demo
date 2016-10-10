@@ -10,6 +10,7 @@ namespace Intel.BikeRental.DAL.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
+            ContextKey = "Intel.BikeRental.DAL.BikeRentalContext";
         }
 
         protected override void Seed(Intel.BikeRental.DAL.BikeRentalContext context)

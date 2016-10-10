@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Intel.BikeRental.Models
 {
-    public class Bike : Vehicle
+    public class Scooter : Vehicle
     {
-        public BikeType BikeType { get; set; }
+        public int EngineCapacity { get; set; }
+
+        public byte MaxSpeed { get; set; }
     }
 }
