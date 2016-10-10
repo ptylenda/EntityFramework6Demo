@@ -1,6 +1,7 @@
 ﻿using Intel.BikeRental.DAL.Configurations;
 using Intel.BikeRental.DAL.Conventions;
 using Intel.BikeRental.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -41,7 +42,11 @@ namespace Intel.BikeRental.DAL
             //modelBuilder.Entity<Bike>().ToTable("Bikes");
             //modelBuilder.Entity<Scooter>().ToTable("Scooters");
 
-            // Configuring TPC hierarchy
+            // Configuring TPC hierarchy (unfortunately it gives PK without identity... doesn't work properly)
+
+            modelBuilder.Entity<Vehicle>()
+                .Property(c => c.VehicleId)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
             modelBuilder.Entity<Bike>().Map(x =>
             {
                 x.MapInheritedProperties();

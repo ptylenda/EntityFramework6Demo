@@ -64,6 +64,10 @@
     <Compile Include="Migrations\201610101013550_ChangeHierarchyTypeForVehiclesToTPC.Designer.cs">
       <DependentUpon>201610101013550_ChangeHierarchyTypeForVehiclesToTPC.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610101023139_ChangeHierarchyTypeForVehiclesToTPCTurnOffIdentity.cs" />
+    <Compile Include="Migrations\201610101023139_ChangeHierarchyTypeForVehiclesToTPCTurnOffIdentity.Designer.cs">
+      <DependentUpon>201610101023139_ChangeHierarchyTypeForVehiclesToTPCTurnOffIdentity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -83,6 +87,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610101013550_ChangeHierarchyTypeForVehiclesToTPC.resx">
       <DependentUpon>201610101013550_ChangeHierarchyTypeForVehiclesToTPC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610101023139_ChangeHierarchyTypeForVehiclesToTPCTurnOffIdentity.resx">
+      <DependentUpon>201610101023139_ChangeHierarchyTypeForVehiclesToTPCTurnOffIdentity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
