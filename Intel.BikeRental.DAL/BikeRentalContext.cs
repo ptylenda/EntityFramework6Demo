@@ -37,6 +37,7 @@ namespace Intel.BikeRental.DAL
             modelBuilder.Configurations.Add(new RentalConfiguration());
             modelBuilder.Configurations.Add(new StationConfiguration());
             
+            // Configuring TPT hierarchy
             modelBuilder.Entity<Bike>().ToTable("Bikes");
             modelBuilder.Entity<Scooter>().ToTable("Scooters");
 
