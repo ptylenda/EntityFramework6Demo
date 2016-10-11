@@ -50,9 +50,10 @@ select 'HE HE");
             DeserializeParametersTest();
             TransactionTest();
             DistributedTransactionTest();
-            ConcurrentWithRowVersionTest();*/
+            ConcurrentWithRowVersionTest();
+            UpdateUserViaSpTest();*/
 
-            UpdateUserViaSpTest();
+
         }
 
         private static void UpdateUserViaSpTest()
@@ -64,7 +65,6 @@ select 'HE HE");
                 context.SaveChanges();
             }
         }
-
 
         private static void ConcurrentWithRowVersionTest()
         {
