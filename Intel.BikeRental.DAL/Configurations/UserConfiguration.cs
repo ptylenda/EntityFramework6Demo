@@ -27,7 +27,12 @@ namespace Intel.BikeRental.DAL.Configurations
             this.Property(x => x.PhoneNumber)
                 .IsConcurrencyToken();
 
-            this.MapToStoredProcedures();
+            this.MapToStoredProcedures(s =>
+            {
+                s.Update(u => u.HasName("FancyUserUpdate"));
+                s.Delete(u => u.HasName("FancyUserDelete"));
+                s.Insert(u => u.HasName("FancyUserInsert"));
+            });
         }
     }
 }

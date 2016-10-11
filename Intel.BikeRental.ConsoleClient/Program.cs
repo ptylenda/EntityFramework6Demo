@@ -60,7 +60,7 @@ select 'HE HE");
             using (var context = new BikeRentalContext())
             {
                 var user = context.Users.First();
-                user.FirstName = "John";
+                user.FirstName = "Johnny";
                 context.SaveChanges();
             }
         }
