@@ -10,9 +10,9 @@ namespace Intel.BikeRental.Models
     {
         public int RentalId { get; set; }
 
-        public User User { get; set; }
-
-        // This cannot be changed immediately
+        // Needed for lazy loading
+        public virtual User User { get; set; }
+        
         public Vehicle Vehicle { get; set; }
 
         public Station StationFrom { get; set; }

@@ -6,11 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Transactions;
+
+using static System.Console;
 
 namespace Intel.BikeRental.ConsoleClient
 {
@@ -19,6 +22,7 @@ namespace Intel.BikeRental.ConsoleClient
         static void Main(string[] args)
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<BikeRentalContext, Configuration>());
+
             /*AddStationTest();
             AddUserTest();
             AddBikeTest();
@@ -51,9 +55,120 @@ select 'HE HE");
             TransactionTest();
             DistributedTransactionTest();
             ConcurrentWithRowVersionTest();
-            UpdateUserViaSpTest();*/
+            UpdateUserViaSpTest();
+            GetRentalsNoLazyLoadingTest();
+            GetRentalsIncludeTest();
+            GetRentalsIncludeViaStringTest();
+            AddRentalsWithoutTrackingPerContextTest();*/
 
+            GenerateDocsTest();
+        }
 
+        private static void GenerateDocsTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var workspace = context.ObjectContext.MetadataWorkspace;
+                var tables = workspace.GetItems<EntityType>(DataSpace.SSpace);
+                foreach (var table in tables)
+                {
+                    WriteLine("========================");
+                    WriteLine($"{table.Name}");
+                    WriteLine("========================");
+
+                    foreach (var prop in table.Properties)
+                    {
+                        WriteLine($"{prop.Name}");
+                    }
+
+                    WriteLine();
+                }
+            }
+        }
+
+        private static void AddRentalsWithoutTrackingPerContextTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                // Check how long it takes when detecting changes is automatic!
+                context.Configuration.AutoDetectChangesEnabled = false;
+
+                var rentals = context.Rentals.ToList();  // Can be achieved via AsNoTracking too
+                var station = context.Stations.First();
+
+                // Disabling change tracking is useful when operating in loops, for example adding many entities (https://msdn.microsoft.com/en-us/data/jj556205.aspx)
+                for (int i = 0; i < 10000; i++)
+                {
+                    context.Rentals.Add(new Rental { DateFrom = DateTime.Now, StationFrom = station });
+                }
+
+                context.ChangeTracker.DetectChanges();  // This is automatically be called by SaveChanges when AutoDetectChangesEnabled = true (https://msdn.microsoft.com/en-us/data/jj556205.aspx)
+                context.SaveChanges();
+            }
+        }
+
+        private static void GetRentalsLazyLoadingTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                context.Configuration.LazyLoadingEnabled = true;
+
+                var rentals = context.Rentals
+                    .ToList();
+
+                foreach (var r in rentals)
+                {
+                    // Will work only after making User virtual in Rental class (due to proxies)
+                    WriteLine($"{r.DateFrom} - {r.DateTo}: {r.User.LastName}");
+                }
+            }
+        }
+
+        private static void GetRentalsIncludeViaStringTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var rentals = context.Rentals
+                    .Include("User")  // Prone to typos and poor refactoring
+                    //.Include("User.Parameters")  // In case of chained references
+                    .ToList();
+
+                foreach (var r in rentals)
+                {
+                    WriteLine($"{r.DateFrom} - {r.DateTo}: {r.User.LastName}");
+                }
+            }
+        }
+
+        private static void GetRentalsIncludeTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var rentals = context.Rentals
+                    .Include(x => x.User)
+                    //.Include(x => x.User.Parameters)  // In case of chained references
+                    .ToList();
+
+                foreach (var r in rentals)
+                {
+                    WriteLine($"{r.DateFrom} - {r.DateTo}: {r.User.LastName}");
+                }
+            }
+        }
+
+        private static void GetRentalsNoLazyLoadingTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var rentals = context.Rentals
+                    .ToList();
+
+                foreach (var r in rentals)
+                {
+                    // Throws exception
+                    WriteLine($"{r.DateFrom} - {r.DateTo}: {r.User.LastName}");
+                }
+            }
         }
 
         private static void UpdateUserViaSpTest()
@@ -89,7 +204,7 @@ select 'HE HE");
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    Console.WriteLine("Hey man, your coffee caused an exception");
+                    WriteLine("Hey man, your coffee caused an exception");
                     var entry = ex.Entries.Single();
                     entry.Reload();
                     entry.Entity.Dump("Somebody has just saved the following station:");
@@ -120,7 +235,7 @@ select 'HE HE");
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    Console.WriteLine("Hey man, your coffee caused an exception");
+                    WriteLine("Hey man, your coffee caused an exception");
                     var entry = ex.Entries.Single();
                     entry.Reload();
                     entry.Entity.Dump("Somebody has just saved the following user:");
@@ -172,7 +287,7 @@ select 'HE HE");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                WriteLine(ex);
             }
         }
 
@@ -220,7 +335,7 @@ select 'HE HE");
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    Console.WriteLine(ex);
+                    WriteLine(ex);
                 }
             }
         }
@@ -389,7 +504,7 @@ select 'HE HE");
                             select vehicle)
                             .Where(x => x.Number.Contains("1"));
 
-                Console.WriteLine(query.ToString());
+                WriteLine(query.ToString());
                 var unionDistinct = query.Distinct();
                 unionDistinct.ToList().Dump();
             }
@@ -429,11 +544,11 @@ select 'HE HE");
 
                 foreach (var group in groups)
                 {
-                    Console.WriteLine(group);
+                    WriteLine(group);
                 }
 
-                Console.WriteLine(groups.ToString());
-                Console.WriteLine();
+                WriteLine(groups.ToString());
+                WriteLine();
 
                 var groups2 = context.Vehicles
                     .GroupBy(v => v.Color)
@@ -441,12 +556,12 @@ select 'HE HE");
 
                 foreach (var group in groups2)
                 {
-                    Console.WriteLine(group);
+                    WriteLine(group);
                 }
 
                 // A really different query will be executed!
-                Console.WriteLine(groups2.ToString());
-                Console.WriteLine();
+                WriteLine(groups2.ToString());
+                WriteLine();
 
                 var groups3 = context.Vehicles
                     .GroupBy(v => new { v.Color, v.IsActive })
@@ -454,11 +569,11 @@ select 'HE HE");
 
                 foreach (var group in groups3)
                 {
-                    Console.WriteLine(group);
+                    WriteLine(group);
                 }
                 
-                Console.WriteLine(groups3.ToString());
-                Console.WriteLine();
+                WriteLine(groups3.ToString());
+                WriteLine();
             }
         }
 
@@ -469,10 +584,10 @@ select 'HE HE");
                 var vehicles = context.Vehicles.Select(x => new { x.Color, x.Number });
                 foreach (var v in vehicles)
                 {
-                    Console.WriteLine(v);
+                    WriteLine(v);
                 }
 
-                Console.WriteLine(vehicles.ToString());
+                WriteLine(vehicles.ToString());
             }
         }
 
@@ -482,7 +597,7 @@ select 'HE HE");
             {
                 foreach (var v in context.Vehicles)
                 {
-                    Console.WriteLine($"{v.Number}, {v.GetType().FullName}");
+                    WriteLine($"{v.Number}, {v.GetType().FullName}");
                 }
             }
         }
@@ -540,19 +655,19 @@ select 'HE HE");
                 // Changing deserialized object
                 bike2.Number = "X123";
 
-                Console.WriteLine(context.Entry(bike2).State);
+                WriteLine(context.Entry(bike2).State);
                 context.Bikes.Attach(bike2);
-                Console.WriteLine(context.Entry(bike2).State);
+                WriteLine(context.Entry(bike2).State);
 
                 // This would be not enough here. It is still only in state Unchanged. Setting state to Modified.
                 context.Entry(bike2).State = EntityState.Modified;
-                Console.WriteLine(context.Entry(bike2).State);
+                WriteLine(context.Entry(bike2).State);
 
                 // Forcing only "Number" property to be treated as modified. This results in better SQL code generation.
                 // Another way is to use EntityFramework.Extended
                 context.Entry(bike2).State = EntityState.Unchanged;
                 context.Entry(bike2).Property(x => x.Number).IsModified = true;
-                Console.WriteLine(context.Entry(bike2).State);
+                WriteLine(context.Entry(bike2).State);
                 
                 context.SaveChanges();
             }
@@ -567,7 +682,7 @@ select 'HE HE");
                 //context.Entry(bike).State = EntityState.Added;
                 foreach (var e in context.ChangeTracker.Entries<Bike>())
                 {
-                    Console.WriteLine(e.Entity);
+                    WriteLine(e.Entity);
                 }
 
                 context.SaveChanges();
@@ -593,9 +708,9 @@ select 'HE HE");
                     LastName = "???"
                 };
 
-                Console.WriteLine(context.Entry(user).State);
+                WriteLine(context.Entry(user).State);
                 context.Users.Add(user);
-                Console.WriteLine(context.Entry(user).State);
+                WriteLine(context.Entry(user).State);
                 context.SaveChanges();
             }
         }
@@ -606,9 +721,9 @@ select 'HE HE");
             {
                 var user = context.Users.Find(1);
 
-                Console.WriteLine(context.Entry(user).State);
+                WriteLine(context.Entry(user).State);
                 context.Users.Remove(user);
-                Console.WriteLine(context.Entry(user).State);
+                WriteLine(context.Entry(user).State);
 
                 context.SaveChanges();
             }
