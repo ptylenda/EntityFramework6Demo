@@ -20,6 +20,10 @@ namespace Intel.BikeRental.DAL.Configurations
 
             this.Property(x => x.SerializedParameters)
                 .HasColumnName("Parameters");
+
+            // Versioning the whole row for concurrency checks
+            this.Property(x => x.RowVersion)
+                .IsRowVersion();
         }
     }
 }

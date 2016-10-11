@@ -68,6 +68,10 @@
     <Compile Include="Migrations\201610110738230_AddStationParameters.Designer.cs">
       <DependentUpon>201610110738230_AddStationParameters.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610111002353_AddStationRowVersion.cs" />
+    <Compile Include="Migrations\201610111002353_AddStationRowVersion.Designer.cs">
+      <DependentUpon>201610111002353_AddStationRowVersion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -87,6 +91,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610110738230_AddStationParameters.resx">
       <DependentUpon>201610110738230_AddStationParameters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610111002353_AddStationRowVersion.resx">
+      <DependentUpon>201610111002353_AddStationRowVersion.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

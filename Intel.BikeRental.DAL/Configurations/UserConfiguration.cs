@@ -23,6 +23,7 @@ namespace Intel.BikeRental.DAL.Configurations
             // Property ignoring example
             this.Ignore(x => x.IsLogged);
             
+            // Checking concurrency for updated on this single field
             this.Property(x => x.PhoneNumber)
                 .IsConcurrencyToken();
         }

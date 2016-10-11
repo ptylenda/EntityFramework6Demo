@@ -28,6 +28,8 @@ namespace Intel.BikeRental.Models
 
         public string SerializedParameters { get; set; }
 
+        public byte[] RowVersion { get; set; }
+
         public class SetupParameters
         {
             public int A { get; set; }

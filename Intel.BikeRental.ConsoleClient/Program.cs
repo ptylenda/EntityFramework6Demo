@@ -51,7 +51,38 @@ select 'HE HE");
             TransactionTest();
             DistributedTransactionTest();*/
 
-            ConcurrentTest();
+            ConcurrentWithRowVersionTest();
+        }
+
+        private static void ConcurrentWithRowVersionTest()
+        {
+            using (var context1 = new BikeRentalContext())
+            using (var context2 = new BikeRentalContext())
+            {
+                var station1 = context1.Stations.Find(1);
+                station1.Name = "Cmc";
+
+                var station2 = context2.Stations.Find(1);
+                station2.Name = "Lmc";
+
+                // Different order
+                context2.SaveChanges();
+
+                // Some longer break, just for demo purpose - coffee break
+                Thread.Sleep(5000);
+
+                try
+                {
+                    context1.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    Console.WriteLine("Hey man, your coffee caused an exception");
+                    var entry = ex.Entries.Single();
+                    entry.Reload();
+                    entry.Entity.Dump("Somebody has just saved the following station:");
+                }
+            }
         }
 
         private static void ConcurrentTest()
@@ -79,6 +110,7 @@ select 'HE HE");
                 {
                     Console.WriteLine("Hey man, your coffee caused an exception");
                     var entry = ex.Entries.Single();
+                    entry.Reload();
                     entry.Entity.Dump("Somebody has just saved the following user:");
                 }
             }
