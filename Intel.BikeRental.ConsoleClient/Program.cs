@@ -4,6 +4,7 @@ using Intel.BikeRental.DAL;
 using Intel.BikeRental.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
@@ -48,7 +49,7 @@ select 'HE HE");
         private static void ExecuteSpWithOutParameterTest()
         {
             var proc = @"
-            create procedure uspDeleteBikeWithColorOut(@BikeId int, @Color varchar output)
+            create procedure uspDeleteBikeWithColorOut(@BikeId int, @Color varchar(30) output)
             as begin
 	            select @Color = [color] from [rentals].[Vehicles] where [VehicleId] = @BikeId;
 	            delete from [rentals].[Vehicles] where [VehicleId] = @BikeId;
@@ -60,14 +61,14 @@ select 'HE HE");
                 context.Bikes.Add(new Bike
                 {
                     BikeType = BikeType.City,
-                    Color = "Test",
-                    Number = "B123"
+                    Color = "Blue!!!",
+                    Number = "B124"
                 });
 
                 context.SaveChanges();
                 context.Bikes.ToList().Dump();
 
-                var bikeToDelete = context.Bikes.FirstOrDefault(x => x.Number == "B123");
+                var bikeToDelete = context.Bikes.FirstOrDefault(x => x.Number == "B124");
 
                 if (bikeToDelete != null)
                 {
@@ -75,12 +76,15 @@ select 'HE HE");
                     var outputParameter = new SqlParameter
                     {
                         ParameterName = "Color",
-                        Direction = System.Data.ParameterDirection.Output
+                        DbType = DbType.String,
+                        Size = 30,
+                        Direction = ParameterDirection.Output
                     };
 
-                    context.Database.ExecuteSqlCommand("uspDeleteBikeWithColorOut @BikeId @Color", idParameter, outputParameter);
+                    context.Database.ExecuteSqlCommand("uspDeleteBikeWithColorOut @BikeId, @Color OUTPUT", idParameter, outputParameter);
 
                     context.SaveChanges();
+                    outputParameter.Dump();
                     context.Bikes.ToList().Dump();
                 }
             }
