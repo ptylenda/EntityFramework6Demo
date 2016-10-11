@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Transactions;
 
 namespace Intel.BikeRental.ConsoleClient
 {
@@ -44,9 +45,58 @@ select 'HE HE");
             GetSqlTest();
             ExecuteSpWithOutParameterTest();
             SerializeParametersTest();
-            DeserializeParametersTest();*/
+            DeserializeParametersTest();
+            TransactionTest();*/
 
-            TransactionTest();
+            DistributedTransactionTest();
+        }
+
+        private static void DistributedTransactionTest()
+        {
+            var badGuy = new Random();
+
+            try
+            {
+                using (var scope = new TransactionScope())
+                {
+                    // First action (on DB1)
+                    using (var context = new BikeRentalContext())
+                    {
+                        var user = new User
+                        {
+                            FirstName = "Jack",
+                            LastName = "Doe"
+                        };
+
+                        context.Users.Add(user);
+                        context.SaveChanges();
+                    }
+
+                    if (badGuy.Next(2) == 0)
+                    {
+                        throw new Exception("Imma bad guy!");
+                    }
+
+                    // Second action (on DB2)
+                    using (var context = new BikeRentalContext())
+                    {
+                        var user = new User
+                        {
+                            FirstName = "Mick",
+                            LastName = "Noe"
+                        };
+
+                        context.Users.Add(user);
+                        context.SaveChanges();
+                    }
+
+                    scope.Complete();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         private static void TransactionTest()
