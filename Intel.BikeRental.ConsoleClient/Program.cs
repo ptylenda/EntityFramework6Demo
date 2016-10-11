@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Transactions;
 
 namespace Intel.BikeRental.ConsoleClient
@@ -46,9 +48,40 @@ select 'HE HE");
             ExecuteSpWithOutParameterTest();
             SerializeParametersTest();
             DeserializeParametersTest();
-            TransactionTest();*/
+            TransactionTest();
+            DistributedTransactionTest();*/
 
-            DistributedTransactionTest();
+            ConcurrentTest();
+        }
+
+        private static void ConcurrentTest()
+        {
+            using (var context1 = new BikeRentalContext())
+            using (var context2 = new BikeRentalContext())
+            {
+                var user1 = context1.Users.Find(1);
+                user1.PhoneNumber = "555-555-555";
+
+                var user2 = context2.Users.Find(1);
+                user2.PhoneNumber = "777-777-777";
+
+                // Different order
+                context2.SaveChanges();
+
+                // Some longer break, just for demo purpose - coffee break
+                Thread.Sleep(5000);
+
+                try
+                {
+                    context1.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    Console.WriteLine("Hey man, your coffee caused an exception");
+                    var entry = ex.Entries.Single();
+                    entry.Entity.Dump("Somebody has just saved the following user:");
+                }
+            }
         }
 
         private static void DistributedTransactionTest()

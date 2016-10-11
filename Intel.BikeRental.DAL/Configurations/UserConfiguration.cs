@@ -22,6 +22,9 @@ namespace Intel.BikeRental.DAL.Configurations
 
             // Property ignoring example
             this.Ignore(x => x.IsLogged);
+            
+            this.Property(x => x.PhoneNumber)
+                .IsConcurrencyToken();
         }
     }
 }
