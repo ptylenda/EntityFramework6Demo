@@ -19,6 +19,9 @@ namespace Intel.BikeRental.DAL.Configurations
 
             this.Property(x => x.LastName)
                 .HasMaxLength(50);
+
+            // Property ignoring example
+            this.Ignore(x => x.IsLogged);
         }
     }
 }

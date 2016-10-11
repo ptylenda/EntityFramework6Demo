@@ -23,5 +23,18 @@ namespace Intel.BikeRental.Models
         public byte Capacity { get; set; }
 
         public bool IsActive { get; set; }
+
+        public SetupParameters Parameters { get; set; }
+
+        public string SerializedParameters { get; set; }
+
+        public class SetupParameters
+        {
+            public int A { get; set; }
+
+            public int B { get; set; }
+
+            public string C { get; set; }
+        }
     }
 }

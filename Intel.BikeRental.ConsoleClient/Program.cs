@@ -1,6 +1,6 @@
 ﻿using ConsoleDump;
 using Intel.BikeRental.DAL;
-//using Intel.BikeRental.DAL.Migrations;
+using Intel.BikeRental.DAL.Migrations;
 using Intel.BikeRental.Models;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Intel.BikeRental.ConsoleClient
     {
         static void Main(string[] args)
         {
-            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<BikeRentalContext, Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<BikeRentalContext, Configuration>());
             /*AddStationTest();
             AddUserTest();
             AddBikeTest();
@@ -41,9 +41,45 @@ select 'HE HE");
 ALTER DATABASE [BikeRentalDb] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 DROP DATABASE [BikeRentalDb] ;
 select 'HE HE");
-            GetSqlTest();*/
-
+            GetSqlTest();
             ExecuteSpWithOutParameterTest();
+            SerializeParametersTest();*/
+            
+            DeserializeParametersTest();
+        }
+
+        private static void DeserializeParametersTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                foreach (var station in context.Stations.Where(x => x.SerializedParameters != null))
+                {
+                    station.Parameters.Dump();
+                }
+            }
+        }
+
+        private static void SerializeParametersTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var station = new Station
+                {
+                    Name = "Station with parameters",
+                    Location = new Location(50, 18),
+                    Parameters = new Station.SetupParameters
+                    {
+                        A = 2,
+                        B = 3,
+                        C = "test param 4"
+                    }
+                };
+
+                context.Stations.Add(station);
+                context.SaveChanges();
+
+                context.Stations.Dump();
+            }
         }
 
         private static void ExecuteSpWithOutParameterTest()

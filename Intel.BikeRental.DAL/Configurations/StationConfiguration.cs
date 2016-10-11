@@ -15,6 +15,11 @@ namespace Intel.BikeRental.DAL.Configurations
             this.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            this.Ignore(x => x.Parameters);
+
+            this.Property(x => x.SerializedParameters)
+                .HasColumnName("Parameters");
         }
     }
 }
