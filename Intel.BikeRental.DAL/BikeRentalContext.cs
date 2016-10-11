@@ -47,7 +47,10 @@ namespace Intel.BikeRental.DAL
 
             foreach (var station in stations)
             {
-                station.Entity.SerializedParameters = JsonConvert.SerializeObject(station.Entity.Parameters);
+                if (station.Entity.Parameters != null)
+                {
+                    station.Entity.SerializedParameters = JsonConvert.SerializeObject(station.Entity.Parameters);
+                }
             }
 
             return base.SaveChanges();
@@ -112,7 +115,7 @@ namespace Intel.BikeRental.DAL
         {
             // Custom deserialization for Stations
             var station = e.Entity as Station;
-            if (station != null)
+            if (station?.SerializedParameters != null)
             {
                 station.Parameters = JsonConvert.DeserializeObject<Station.SetupParameters>(station.SerializedParameters);
             }

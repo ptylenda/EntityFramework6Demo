@@ -43,9 +43,59 @@ DROP DATABASE [BikeRentalDb] ;
 select 'HE HE");
             GetSqlTest();
             ExecuteSpWithOutParameterTest();
-            SerializeParametersTest();*/
-            
-            DeserializeParametersTest();
+            SerializeParametersTest();
+            DeserializeParametersTest();*/
+
+            TransactionTest();
+        }
+
+        private static void TransactionTest()
+        {
+            var badGuy = new Random();
+
+            using (var context = new BikeRentalContext())
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // First action
+                    var user = new User
+                    {
+                        FirstName = "Jack",
+                        LastName = "Doe"
+                    };
+
+                    context.Users.Add(user);
+                    context.SaveChanges();
+
+                    if (badGuy.Next(2) == 0)
+                    {
+                        throw new Exception("Imma bad guy!");
+                    }
+
+                    // Second action
+                    var bikeToRent = context.Bikes.First();
+                    var station = context.Stations.First();
+                    var promoRental = new Rental
+                    {
+                        StationFrom = station,
+                        Cost = 100,
+                        DateFrom = DateTime.Now,
+                        User = user,
+                        Vehicle = bikeToRent
+                    };
+
+                    context.Rentals.Add(promoRental);
+                    context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine(ex);
+                }
+            }
         }
 
         private static void DeserializeParametersTest()
