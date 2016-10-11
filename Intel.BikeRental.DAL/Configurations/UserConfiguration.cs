@@ -26,6 +26,8 @@ namespace Intel.BikeRental.DAL.Configurations
             // Checking concurrency for updated on this single field
             this.Property(x => x.PhoneNumber)
                 .IsConcurrencyToken();
+
+            this.MapToStoredProcedures();
         }
     }
 }

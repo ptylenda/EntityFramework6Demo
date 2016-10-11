@@ -49,10 +49,22 @@ select 'HE HE");
             SerializeParametersTest();
             DeserializeParametersTest();
             TransactionTest();
-            DistributedTransactionTest();*/
+            DistributedTransactionTest();
+            ConcurrentWithRowVersionTest();*/
 
-            ConcurrentWithRowVersionTest();
+            UpdateUserViaSpTest();
         }
+
+        private static void UpdateUserViaSpTest()
+        {
+            using (var context = new BikeRentalContext())
+            {
+                var user = context.Users.First();
+                user.FirstName = "John";
+                context.SaveChanges();
+            }
+        }
+
 
         private static void ConcurrentWithRowVersionTest()
         {
